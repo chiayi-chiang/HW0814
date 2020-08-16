@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/jquery.toast.css">
+    <style>
+        .modal-header, h4, .close {
+            background-color: #5cb85c;
+            color: white;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .modal-footer {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>最新消息<span class="pull-right"><button id="newItem" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></span></h2>
+            <ul id="latestNews" class="list-group">
+                <li class="list-group-item">First item<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span></li>
+                <li class="list-group-item"><!--文字-->
+                    Second item
+                    <span class="pull-right">
+                        <button class="btn btn-info btn-xs editItem">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span><!--按鈕-->
+                        </button>&nbsp;
+                        <button class="btn btn-danger btn-xs deleteItem">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!--按鈕-->
+                        </button>
+                    </span>
+                </li>
+                <li class="list-group-item">Third item<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-4">
+            &nbsp;
+        </div>
+
+        <div class="col-sm-4">
+            &nbsp;
+        </div>
+
+    </div>  <!-- end of row -->
+
+</div> <!-- end of container -->
+
+
+
+
+<!-- 對話盒 -->
+<div id="newsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>新增/修改</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="titleTextBox">
+                            <span class="glyphicon glyphicon-bullhorn"></span>
+                            標題
+                        </label>
+                        <input type="text"
+                               id="titleTextBox"
+                               class="form-control"
+                               placeholder="請輸入標題" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ymdTextBox">
+                            <span class="glyphicon glyphicon-time"></span>
+                            日期
+                        </label>
+                        <input type="text"
+                               id="ymdTextBox"
+                               class="form-control"
+                               placeholder="yyyy-mm-dd 例如: 2017-05-20">
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                    <div class="pull-right">
+                        <button type="button"
+                                id="okButton"
+                                class="btn btn-success">
+                            <span class="glyphicon glyphicon-ok"></span> 確定
+                        </button>
+                        <button type="button"
+                                id="cancelButton"
+                                class="btn btn-default"
+                                data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span> 取消
+                        </button>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /對話盒 -->
+
+
+<!-- ========== UI 與 JavaScript 分隔線 ========== -->
+
+
+<script src="js/jquery.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.toast.js"></script>
+
+<script>
+
+// 使用方式:
+// showToast("標題", "提示文字") 例如:
+// showToast("Hint", "請點一下正確的圖案");
+function showToast(heading, message) {
+    $.toast({
+        text: message, // Text that is to be shown in the toast
+        heading: heading, // Optional heading to be shown on the toast
+        icon: 'warning', // Type of toast icon
+        showHideTransition: 'fade', // fade, slide or plain
+        allowToastClose: true, // Boolean value true or false
+        hideAfter: 3000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+        stack: 5, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+        position: 'top-right', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
+        textAlign: 'left',  // Text alignment i.e. left, right or center
+        loader: true,  // Whether to show loader or not. True by default
+        loaderBg: '#9ec600',  // Background color of the toast loader
+        beforeShow: function () { }, // will be triggered before the toast is shown
+        afterShown: function () { }, // will be triggered after the toat has been shown
+        beforeHide: function () { }, // will be triggered before the toast gets hidden
+        afterHidden: function () { }  // will be triggered after the toast has been hidden
+    });
+}
+
+</script>
+
+
+<script>
+
+
+$(function () {
+
+    var newsList =
+    [
+        { ymd: "2017-05-01", title: "Item 1" },
+        { ymd: "2017-05-01", title: "Item 2" },
+        { ymd: "2017-05-02", title: "Item 3" },
+        { ymd: "2017-05-03", title: "Item 4" },
+        { ymd: "2017-05-04", title: "Item 5" }
+    ];
+    
+
+    // // 練習與任務:
+    let currentindex = -1;//-1->新增，0->編輯第一筆，2->編輯第三筆
+    //下載且重新整理
+    downloadAndRefresh();//呼叫此函數
+    function downloadAndRefresh(){
+        $.ajax({//透過.ajax方法
+            type:"get",//用get
+            url:"/home/news"//向/home/news撈資料
+        }).then(function(e){//撈到資料e
+            newsList = JSON.parse(e);//字串轉成JSON格式陣列，存給newsList
+            refreshUI();
+        })
+    }
+    
+        
+    
+    
+    //將newsList一項一項列出
+    //畫面會跑出五個標題
+    
+    //建成一個刷新資料的副程式
+    function refreshUI(){
+        $("#latestNews").empty();//清空舊有內容，新增資料
+        for(let i = 0; i < newsList.length ; i++){
+            let newsItem = newsList[i];
+            //加入<li>
+            //let litext = "<li class='list-group-item'>"+newsItem.title+"["+newsItem.ymd+"]</li>";
+            //``寫法，效果同上行，但下行較好維護
+            //let litext =`<li class="list-group-item"> ${newsItem.title} [${newsItem.ymd}] </li>`;
+            //alert(litext);
+            //showToast("test",litext);//120行，傳入(標題，資料)
+
+            //資料陣列出現在下方，但與上方資料不同，需增加美術樣式
+            //$("#latestNews").append(litext);//append->既有內容不動，增加新資料在後方
+
+            let litext = newsItem.title+" ["+newsItem.ymd+"]";
+            //傳入一個空元素，用jQuery.text增加陣列資料和.addClass美術樣式進<li></li>中
+            let $li = $("<li></li>")//jQuery的li
+                .text(litext)
+                .addClass("list-group-item")
+                .append('<span class="pull-right"><button class="btn btn-info btn-xs editItem"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>&nbsp;<button class="btn btn-danger btn-xs deleteItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></span>');
+            $li.appendTo("#latestNews");//一個學生參加這個班級
+            //$("#latestNews").append($li);//一個班級append一個學生進來 
+        }
+        //更改
+        $(".editItem").on("click",function(){
+            var index = $(this).closest("li").index();
+            currentindex = index;
+            
+            //被指定要更新的資料未被替換，更新後資料出現在下方
+            //將okButton倒過來描述
+            title:$("#titleTextBox").prop("value",newsList[index].title);//value屬性設定為新的內容
+            ymd:$("#ymdTextBox").val(newsList[index].ymd);
+            $("#newsModal").modal({backdrop:"static"});
+        })
+
+        //刪除按鈕
+        $(".deleteItem").on("click",function(){
+            //let index = $(this).parent().parent().index();//.deleteItem的父階(span)的父階(li)的index
+            let index = $(this).closest("li").index();//最接近li的編號是幾號，效果同上行
+            $.ajax({
+                type: "delete",
+                url: "/home/news",
+                data:newsList[index]
+            }).then(function(e){
+                downloadAndRefresh();
+            })
+            //alert(newsList[index].title);//確定刪除列
+            
+        })
+
+    }
+    $("#newItem").on("click",function(){//呼叫對話格
+        currentindex = -1;
+        $("#newsModal").modal({backdrop: "static"}/*此方法可以讓背景處無作用*/ );//呼叫modal方法
+        
+    })
+
+    //新增/更改資料
+    $("#okButton").on("click",function(){
+        $("#newsModal").modal("hide");//點選確定後對話框會隱藏
+        if(currentindex<0){//=-1時,new Item
+            let dataToServer = {
+                //title與ymd兩個輸入框的名字
+                title:$("#titleTextBox").prop("value"),
+                ymd:$("#ymdTextBox").val()
+            }
+            //alert(JSON.stringify(dataToServer));//確定有讀取輸入資料
+            
+            //往後端丟資料
+            $.ajax({
+                type:"post",
+                url:"/home/news",
+                contentType:"application/json",//指定網頁要送到server端的資料型態
+                data:JSON.stringify(dataToServer)
+            }).then(function(){
+                //alert("ok");//需手動重新整理
+                //將重新整理包成一個函數呼叫
+                downloadAndRefresh();
+            })
+        }
+        else{//edit Item
+            let dataToServer = {
+                newsId:newsList[currentindex].newsId,
+                //title與ymd兩個輸入框的名字
+                title:$("#titleTextBox").prop("value"),
+                ymd:$("#ymdTextBox").val()
+            }
+            $.ajax({
+                type:"put",
+                url:"/home/news",
+                data:dataToServer
+            }).then(function(){
+                //alert("ok");//需手動重新整理
+                //將重新整理包成一個函數呼叫
+                downloadAndRefresh();
+            })
+            //alert(JSON.stringify(dataToServer));//確定是否抓到資料
+        }
+        
+    })
+
+
+
+})  // end of init.
+
+</script>
+
+</body>
+</html>
